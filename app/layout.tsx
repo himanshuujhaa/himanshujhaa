@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: "Himanshu Jha",
-  description: "Software Engineer | Java | Spring Boot | Next.js | AI",
+  title: "Himanshu Jha | Software Engineer",
+  description: "Software Engineer specializing in Java, Spring Boot, AI integration, and modern web applications.",
 };
 
 export default function RootLayout({
@@ -24,10 +19,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <Navbar/>
-        {children}
+    <html lang="en" className="dark">
+      <body className={`${inter.variable} ${inter.className} min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white`}>
+        <Navbar />
+        <div className="flex-1 relative z-10">
+          {children}
+        </div>
+        <footer className="border-t border-slate-200 dark:border-slate-800/80 py-8 text-center text-sm text-slate-500 dark:text-slate-400 relative z-10 bg-slate-50/50 dark:bg-slate-950/50 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© {new Date().getFullYear()} Himanshu Jha. All rights reserved.</p>
+            <div className="flex items-center space-x-6">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">GitHub</a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">LinkedIn</a>
+              <a href="mailto:contact@himanshujha.com" className="hover:text-blue-500 transition-colors">Contact</a>
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );
