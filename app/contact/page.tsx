@@ -21,6 +21,7 @@ export default function ContactPage() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        console.log("Submitting form data from browser:", formData);
 
         try {
             const res = await fetch("/api/contact", {
@@ -31,7 +32,11 @@ export default function ContactPage() {
                 body: JSON.stringify(formData)
             });
 
+            console.log("Server responded with status:", res.status);
+
             if (res.ok) {
+                const data = await res.json();
+                console.log("Server response body:", data);
                 setSubmitted(true);
                 setFormData({
                     name: "",
@@ -40,10 +45,11 @@ export default function ContactPage() {
                     message: ""
                 });
             } else {
+                console.error("Server error response status:", res.status);
                 alert("Something went wrong. Please try again.");
             }
         } catch (error) {
-            console.error(error);
+            console.error("Error submitting form:", error);
             alert("Something went wrong. Please try again.");
         }
     };
