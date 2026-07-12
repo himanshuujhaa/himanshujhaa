@@ -51,9 +51,9 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
             <p>© {new Date().getFullYear()} Himanshu Jha. All rights reserved.</p>
             <div className="flex items-center space-x-6">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">GitHub</a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">LinkedIn</a>
-              <a href="mailto:contact@himanshujha.com" className="hover:text-blue-500 transition-colors">Contact</a>
+              <a href="https://github.com/himanshuujhaa" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">GitHub</a>
+              <a href="https://www.linkedin.com/in/himanshujhaa/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">LinkedIn</a>
+              <a href="mailto:himanshuprincejha2001@gmail.com" className="hover:text-blue-500 transition-colors">Contact</a>
             </div>
           </div>
         </footer>
