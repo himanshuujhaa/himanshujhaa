@@ -10,7 +10,7 @@ export default function HeroImage() {
       <div className="relative p-2 rounded-full glass-card border border-white/20 shadow-2xl animate-float">
         <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-full overflow-hidden border-2 border-white/40 dark:border-slate-700">
           <Image
-            src="/images/profile.jpg"
+            src="/images/HimanshuJha_Profile.jpeg"
             alt="Himanshu Jha"
             fill
             sizes="(max-width: 768px) 256px, 320px"
