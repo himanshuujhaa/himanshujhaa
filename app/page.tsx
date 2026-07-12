@@ -1,38 +1,9 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import { projects } from "@/data/projects";
+import { expertise } from "@/data/expertise";
 
 export default function Home() {
-  const expertise = [
-    {
-      icon: (
-        <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 12h14M12 5l7 7-7 7" />
-        </svg>
-      ),
-      title: "Backend Architecture",
-      description: "Designing scalable enterprise services, RESTful APIs, and robust data models with Java, Spring Boot, and relational databases.",
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-        </svg>
-      ),
-      title: "AI Integration & Agents",
-      description: "Leveraging LLM APIs, prompt engineering, and modern AI frameworks to create intuitive intelligent applications and automation tools.",
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-        </svg>
-      ),
-      title: "Full-Stack Web Engineering",
-      description: "Building fast, dynamic, and accessible frontend interfaces using React, Next.js, and modern CSS utility frameworks.",
-    },
-  ];
-
   return (
     <main className="space-y-24 pb-24">
       {/* Hero Section */}
