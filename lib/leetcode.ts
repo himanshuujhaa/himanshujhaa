@@ -7,6 +7,23 @@ query getUserAndContest($username: String!) {
                 count
             }
         }
+        tagProblemCounts {
+            advanced {
+                tagName
+                tagSlug
+                problemsSolved
+            }
+            intermediate {
+                tagName
+                tagSlug
+                problemsSolved
+            }
+            fundamental {
+                tagName
+                tagSlug
+                problemsSolved
+            }
+        }
     }
     userContestRanking(username: $username) {
         attendedContestsCount
@@ -32,7 +49,7 @@ const CACHE_DURATION = 3600 * 1000; // 1 hour in ms
 
 export async function fetchLeetCode(username: string) {
     const now = Date.now();
-    
+
     // Return cached data if it's less than 1 hour old
     if (cachedData && (now - lastFetched < CACHE_DURATION)) {
         console.log("Serving LeetCode data from cache");
@@ -60,13 +77,13 @@ export async function fetchLeetCode(username: string) {
         return data;
     } catch (error) {
         console.error("Error fetching LeetCode data from API:", error);
-        
+
         // Return stale data as fallback if we have it
         if (cachedData) {
             console.log("Serving stale LeetCode data as fallback after error");
             return cachedData;
         }
-        
+
         throw error;
     }
 }
