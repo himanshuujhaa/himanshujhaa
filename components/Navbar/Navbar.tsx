@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -26,15 +28,16 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <nav className="flex items-center space-x-1 sm:space-x-6">
-          <div className="flex items-center space-x-1 sm:space-x-2 bg-slate-100/60 dark:bg-slate-900/60 p-1.5 rounded-full border border-slate-200/60 dark:border-slate-800/60">
+        <div className="flex items-center space-x-3 sm:space-x-6">
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex items-center space-x-2 bg-slate-100/60 dark:bg-slate-900/60 p-1.5 rounded-full border border-slate-200/60 dark:border-slate-800/60">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
                     isActive
                       ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
@@ -44,10 +47,58 @@ export default function Navbar() {
                 </Link>
               );
             })}
-          </div>
+          </nav>
 
           <ThemeToggle />
-        </nav>
+
+          {/* Hamburger button for Mobile */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden p-2 rounded-lg text-slate-650 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors focus:outline-none"
+            aria-label="Toggle Menu"
+          >
+            <svg
+              className="w-6 h-6 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+            >
+              {isOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Dropdown Drawer */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-350 border-t border-slate-200/55 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg ${
+          isOpen ? "max-h-[300px] opacity-100 py-4 px-6" : "max-h-0 opacity-0 py-0 px-6 pointer-events-none"
+        }`}
+      >
+        <div className="flex flex-col space-y-3">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  isActive
+                    ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/15"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </header>
   );
