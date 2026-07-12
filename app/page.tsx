@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import { projects } from "@/data/projects";
 import { expertise } from "@/data/expertise";
 import LeetcodeCard from "@/components/LeetCodeCard";
+import Experiences from "@/components/Experiences/Experiences";
 
 export default function Home() {
   return (
@@ -39,6 +40,20 @@ export default function Home() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Work Experience Section */}
+      <section id="experience" className="max-w-7xl mx-auto px-6 relative z-10 scroll-mt-24">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Work Experience
+          </h2>
+          <p className="mt-4 text-slate-600 dark:text-slate-400 text-base sm:text-lg">
+            My professional journey and key contributions across organizations.
+          </p>
+        </div>
+
+        <Experiences />
       </section>
 
       {/* Featured Projects Section */}
