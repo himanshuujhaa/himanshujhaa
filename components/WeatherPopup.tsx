@@ -44,21 +44,17 @@ export default function WeatherPopup() {
 
     // Scroll listener to detect when user reaches the bottom
     useEffect(() => {
-        // Retrieve dismissed state from sessionStorage to persist across page refreshes in same tab
-        const dismissed = sessionStorage.getItem("weather_detective_dismissed") === "true";
-        if (dismissed) {
-            setIsDismissed(true);
-            return;
-        }
-
         const handleScroll = () => {
             if (hasTriggered || isDismissed) return;
 
-            // Trigger when within 100px of the bottom of the page
-            const scrollPosition = window.innerHeight + window.scrollY;
-            const threshold = document.documentElement.scrollHeight - 100;
+            const scrollHeight = document.documentElement.scrollHeight;
+            const clientHeight = document.documentElement.clientHeight;
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
-            if (scrollPosition >= threshold) {
+            // Trigger when user scrolls within 150px of the bottom of the page
+            const isAtBottom = scrollHeight - scrollTop - clientHeight <= 150;
+
+            if (isAtBottom) {
                 setHasTriggered(true);
                 setIsVisible(true);
                 fetchWeather();
@@ -91,7 +87,6 @@ export default function WeatherPopup() {
         setTimeout(() => {
             setIsVisible(false);
             setIsDismissed(true);
-            sessionStorage.setItem("weather_detective_dismissed", "true");
         }, 300);
     };
 

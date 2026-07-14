@@ -4,15 +4,15 @@ export const revalidate = 1800; // Cache response for 30 minutes at CDN/Server l
 
 export async function GET(request: NextRequest) {
     try {
-        // Try getting client IP address from standard headers
+        // Get client IP address
         let ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "";
 
         // Standardise IP (remove port if present in header, and split multiple IPs if forwarded)
         if (ip.includes(",")) {
             ip = ip.split(",")[0].trim();
         }
-        if (ip.includes(":")) {
-            // Check if it's an IPv6 address or an IPv4 with port
+        if (ip.includes(":") && !ip.includes(".")) {
+            // If it contains colon but no dot, check if it's an IPv6 with port
             const parts = ip.split(":");
             if (parts.length === 2) {
                 ip = parts[0];
@@ -21,36 +21,61 @@ export async function GET(request: NextRequest) {
 
         // Detect local development loopback IPs
         const isLocalhost = ip === "::1" || ip === "127.0.0.1" || ip.startsWith("::ffff:127.0.0.1") || !ip;
-        
-        // If testing locally, use a default public IP from Delhi, India as fallback
         const targetIp = isLocalhost ? "103.159.255.255" : ip;
 
-        // 1. Fetch IP location details
-        const ipResponse = await fetch(`https://ipapi.co/${targetIp}/json/`, {
-            next: { revalidate: 86400 } // Cache IP location lookup for 24 hours
-        });
+        // 1. Try Vercel built-in Geo headers first (instantly available in Vercel deployments, no external calls/rate-limits)
+        let city = request.headers.get("x-vercel-ip-city") || "";
+        let latitude = request.headers.get("x-vercel-ip-latitude") || "";
+        let longitude = request.headers.get("x-vercel-ip-longitude") || "";
 
-        if (!ipResponse.ok) {
-            throw new Error(`IP lookup failed for IP: ${targetIp}`);
+        if (city) {
+            city = decodeURIComponent(city);
         }
 
-        const locationData = await ipResponse.json();
-        
-        // Check if ipapi.co returned an error (e.g. rate limit / reserved range)
-        if (locationData.error) {
-            throw new Error(`ipapi error: ${locationData.reason || "Reserved IP/Rate Limit"}`);
+        // 2. If not running on Vercel or headers are missing, fall back to IP lookup API
+        if (!city || !latitude || !longitude) {
+            try {
+                // Primary IP fallback: freeipapi.com (HTTPS, high limits, rate-limits by client IP, not server IP)
+                const ipResponse = await fetch(`https://freeipapi.com/api/json/${targetIp}`, {
+                    next: { revalidate: 86400 } // Cache lookup for 24 hours
+                });
+                if (ipResponse.ok) {
+                    const data = await ipResponse.json();
+                    city = data.cityName || "your area";
+                    latitude = data.latitude ? data.latitude.toString() : "";
+                    longitude = data.longitude ? data.longitude.toString() : "";
+                }
+            } catch (err) {
+                console.warn("freeipapi lookup failed, trying ipapi.co fallback:", err);
+                try {
+                    // Secondary IP fallback: ipapi.co
+                    const ipResponse = await fetch(`https://ipapi.co/${targetIp}/json/`, {
+                        next: { revalidate: 86400 }
+                    });
+                    if (ipResponse.ok) {
+                        const data = await ipResponse.json();
+                        if (!data.error) {
+                            city = data.city || "your area";
+                            latitude = data.latitude ? data.latitude.toString() : "";
+                            longitude = data.longitude ? data.longitude.toString() : "";
+                        }
+                    }
+                } catch (err2) {
+                    console.warn("ipapi.co fallback failed:", err2);
+                }
+            }
         }
 
-        const city = locationData.city || "your area";
-        const latitude = locationData.latitude;
-        const longitude = locationData.longitude;
+        // If location lookup fails completely, standard static fallbacks will be used in the catches
+        const latFloat = latitude ? parseFloat(latitude) : null;
+        const lonFloat = longitude ? parseFloat(longitude) : null;
 
         let temperature = 25;
         let weathercode = 0;
         let condition = "Nice Weather 🌤️";
 
-        // 2. Fetch current weather from Open-Meteo using lat/lon
-        if (latitude && longitude) {
+        // 3. Fetch current weather from Open-Meteo using lat/lon
+        if (latFloat !== null && lonFloat !== null && !isNaN(latFloat) && !isNaN(lonFloat)) {
             const weatherResponse = await fetch(
                 `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`,
                 { next: { revalidate: 1800 } } // Cache weather requests for 30 minutes
@@ -98,7 +123,7 @@ export async function GET(request: NextRequest) {
 
     } catch (error: any) {
         console.error("Weather API error:", error);
-        
+
         // Safe, graceful fallback in case of errors
         return NextResponse.json({
             city: "Delhi",
